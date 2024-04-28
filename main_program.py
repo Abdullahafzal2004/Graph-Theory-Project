@@ -1,6 +1,7 @@
 from Functions import *
 import networkx as nx
 import matplotlib.pyplot as plt
+
 #--------------------------------------------------------------------------------------------------------
 #--------------------------------------------------------------------------------------------------------
 #                               1. Data Collection and Preparation:
@@ -61,4 +62,13 @@ for index, row in preprocessed_df.iterrows():
 
 # Plot the first graph in the training set
 print("Graph of the first article in the training set")
-plot_graph(graphs_train_set[1])
+plot_graph(graphs_train_set[2])
+
+#--------------------------------------------------------------------------------------------------------
+#--------------------------------------------------------------------------------------------------------
+#                               4. Feature Extraction via Common Subgraphs:
+#--------------------------------------------------------------------------------------------------------
+#--------------------------------------------------------------------------------------------------------
+# train the classifier
+training_labels = train_set['label'].tolist()
+classifier = train_classifier(graphs_train_set, training_labels)
