@@ -27,11 +27,8 @@ def combine_and_save_data(filename):
         combined_df = pd.concat([combined_df, df2.iloc[[i]]])
         combined_df = pd.concat([combined_df, df3.iloc[[i]]])
 
-    # Save the combined dataframe to a new CSV file
     combined_df.to_csv(filename, index=False)
 
-    # Print the length of the combined dataframe
-    # print("Length of combined_df:", len(combined_df))
 
 
 # Tokenization
