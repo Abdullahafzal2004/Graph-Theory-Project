@@ -14,7 +14,7 @@ def combine_and_save_data(filename):
     # Read the three CSV files
     df1 = pd.read_csv("articles/disease_articles.csv")
     df2 = pd.read_csv("articles/science_edu_articles.csv")
-    #df3 = pd.read_csv("articles/fashion_articles.csv")
+    df3 = pd.read_csv("articles/fashion_articles.csv", encoding='latin1')
 
     # Initialize an empty dataframe to store the combined data
     combined_df = pd.DataFrame()
@@ -23,7 +23,7 @@ def combine_and_save_data(filename):
     for i in range(5):
         combined_df = pd.concat([combined_df, df1.iloc[[i]]])
         combined_df = pd.concat([combined_df, df2.iloc[[i]]])
-        #combined_df = pd.concat([combined_df, df3.iloc[[i]]])
+        combined_df = pd.concat([combined_df, df3.iloc[[i]]])
 
     # Save the combined dataframe to a new CSV file
     combined_df.to_csv(filename, index=False)
