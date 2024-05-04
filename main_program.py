@@ -24,32 +24,30 @@ save_preprocessed_data(preprocessed_data, filename_preprocess)
 preprocessed_df = pd.DataFrame(preprocessed_data)
 
 # Separating into train and test data
-train_set = uncleaned_data.iloc[:12]  # Access the first 12 rows
-test_set = uncleaned_data.iloc[12:]   # Access the remaining rows
+train_set = preprocessed_df.iloc[:36]  # Access the first 12 rows
+test_set = preprocessed_df.iloc[36:]   # Access the remaining rows
 
 # Graph construction
 
 # Generate the graph for the training set
 train_graphs = []
 for index, row in train_set.iterrows():
-    # Build the directed graph
-    graph = construct_graph(row['content_tokens'])
-    train_graphs.append(graph)
+    content_tokens = row.get('content_tokens')  # Check if 'content_tokens' exists in the row
+    if content_tokens:
+        graph = construct_graph(content_tokens)
+        train_graphs.append(graph)
 
 # Generate the graph for the test set
 test_graphs = []
 for index, row in test_set.iterrows():
-    # Build the directed graph
-    graph = construct_graph(row['content_tokens'])
-    test_graphs.append(graph)
+    content_tokens = row.get('content_tokens')  # Check if 'content_tokens' exists in the row
+    if content_tokens:
+        graph = construct_graph(content_tokens)
+        test_graphs.append(graph)
 
 # Plot a graph from the training set for visualization
-plot_graph(train_graphs[2])
-"""
-#Feature extraction via common subgraph
+plot_graph(train_graphs[4])
 
-training_labels = train_set['label'].tolist()
-classifier = train_classifier(graphs_train_set, training_labels)
 
 #             3. Classification with KNN:
     
@@ -91,4 +89,4 @@ plt.xlabel('Predicted Labels')
 plt.ylabel('True Labels')
 plt.title('Confusion Matrix')
 plt.show()
-"""
+
