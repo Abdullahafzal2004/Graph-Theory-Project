@@ -1,7 +1,6 @@
 import requests
 from bs4 import BeautifulSoup
 import os
-import json
 import csv
 from datetime import datetime
 import unicodedata
@@ -105,15 +104,6 @@ def scrape_data(url):
     except Exception as e:
         print(f"Error scraping data from {url}: {e}")
         return None
-"""**Function to save scraped data (dictionary) to a file as JSON format**"""
-
-def save_to_json(data, filename):
-    try:
-        with open(filename, 'w', encoding='utf-8') as f:
-            json.dump(data, f, ensure_ascii=False, indent=4)
-        print(f"Data saved to {filename}")
-    except Exception as e:
-        print(f"Error saving data to {filename}: {e}")
 
 """**Function to save scraped data (dictionary) to a file as CSV format**"""
 
@@ -159,10 +149,8 @@ min_articles = 15  # Minimum number of articles to scrape
 articles_data = scrape_articles(sport_url, pages, min_articles)
 # Create a directory to save the articles
 os.makedirs("articles", exist_ok=True)
-json_file = 'articles/science_education_articles.json'
 csv_file = 'articles/science_education_articles.csv'
 
-# Save to JSON file
-save_to_json(articles_data, json_file)
+
 # Save to CSV file
 save_to_csv(articles_data, csv_file)

@@ -8,6 +8,7 @@ from gspan_mining import gSpan
 import re
 import numpy as np
 from sklearn.neighbors import KNeighborsClassifier
+from collections import defaultdict
 
 nltk.download('punkt')
 nltk.download('stopwords')
@@ -97,20 +98,6 @@ def save_preprocessed_data(data, output_file):
     # Save the preprocessed data to a CSV file
     preprocessed_df.to_csv(output_file, index=False)
 
-def generate_graph(data):
-    graph = nx.DiGraph()
-    for token_list in data['content_tokens']:  # Assuming 'content_tokens' contains lists of tokens
-        # Add nodes for unique terms
-        for term in token_list:
-            graph.add_node(term)
-        
-        # Add edges between consecutive terms
-        for i in range(len(token_list) - 1):
-            current_term = token_list[i]
-            next_term = token_list[i + 1]
-            graph.add_edge(current_term, next_term)
-    return graph
-
 # Function to build directed graph
 def construct_graph(tokens):
     graph = nx.DiGraph()
@@ -128,7 +115,35 @@ def plot_graph(graph):
     labels = nx.get_edge_attributes(graph, 'weight')
     nx.draw_networkx_edge_labels(graph, pos, edge_labels=labels, font_color='red', font_size=10)
     plt.show()
+# Function to compute distances between test graph and all training graphs
+def compute_distances(graph1, graph2):
+    mcs_size = compute_mcs(graph1, graph2)
+    max_edges = max(len(graph1.edges()), len(graph2.edges()))
+    return 1 - (mcs_size / max_edges)
+# Function to compute MCS between two graphs
+def compute_mcs(graph1, graph2):
+    common_edges = find_common_edges(graph1, graph2)
+    return len(common_edges)
+def find_common_edges(graph1, graph2):
+    common_edges = set()
+    for edge1 in graph1.edges():
+        if edge1 in graph2.edges():
+            common_edges.add(edge1)
+    return common_edges
 # Function to train the classifier
+def knn(train_data, test_instance, k, train_labels):
+    distances = []
+    for i, train_instance in enumerate(train_data):
+        label = train_labels[i]
+        distance = compute_distances(test_instance, train_instance)
+        distances.append((label, distance))
+    distances.sort(key=lambda x: x[1])
+    neighbors = distances[:k]
+    class_counts = defaultdict(int)
+    for neighbor in neighbors:
+        class_counts[neighbor[0]] += 1
+    predicted_class = max(class_counts, key=class_counts.get)
+    return predicted_class
 def train_classifier(training_graphs, training_labels):
     # Compute the feature vectors for the training graphs
     feature_vectors = []
@@ -151,28 +166,4 @@ def train_classifier(training_graphs, training_labels):
     classifier.fit(feature_vectors, training_labels)
 
     return classifier
-# Function to compute distances between test graph and all training graphs
-def compute_distances(test_graph, training_graphs):
-    distances = []
-    for training_graph in training_graphs:
-        mcs = compute_mcs(test_graph, training_graph)
-        # Convert MCS to a distance measure and normalize
-        distance = 1 - (mcs / max(len(test_graph.edges()), len(training_graph.edges())))
-        distances.append(distance)
-    return distances
-# Function to compute MCS between two graphs
-def compute_mcs(graph1, graph2):
-    # Extract the set of edges from each graph
-    edges1 = set(graph1.edges())
-    edges2 = set(graph2.edges())
 
-    # Compute the set of common edges between the two graphs
-    common_edges = edges1.intersection(edges2)
-
-    # Construct a new graph using the common edges, representing the maximal common subgraph
-    mcs_graph = nx.Graph(list(common_edges))
-
-    # Calculate the graph distance (negative size of the maximal common subgraph)
-    distance = -len(mcs_graph.edges())
-
-    return distance

@@ -1,6 +1,8 @@
 from Functions import *
 import networkx as nx
 import matplotlib.pyplot as plt
+from sklearn.metrics import accuracy_score, classification_report, confusion_matrix
+import seaborn as sns
 
 # Data Collection and Scrapping
 
@@ -12,35 +14,81 @@ combine_and_save_data(filename)
 # Read the uncleaned data
 uncleaned_data = pd.read_csv(filename)
 
-# Separating into train and test data
-train_set = uncleaned_data.iloc[:12]  # Access the first 12 rows
-test_set = uncleaned_data.iloc[12:]   # Access the remaining rows
-
 
 # Pre-Processing data on train
-preprocessed_data = preprocess_data(train_set)
+preprocessed_data = preprocess_data(uncleaned_data)
 
 # Save preprocessed train dataset to CSV
 save_preprocessed_data(preprocessed_data, filename_preprocess)
 
 preprocessed_df = pd.DataFrame(preprocessed_data)
-# filename_preprocess = 'preprocessed_data.csv'
 
-
+# Separating into train and test data
+train_set = uncleaned_data.iloc[:12]  # Access the first 12 rows
+test_set = uncleaned_data.iloc[12:]   # Access the remaining rows
 
 # Graph construction
 
-graphs_train_set = []
-for index, row in preprocessed_df.iterrows():
+# Generate the graph for the training set
+train_graphs = []
+for index, row in train_set.iterrows():
     # Build the directed graph
     graph = construct_graph(row['content_tokens'])
-    graphs_train_set.append(graph)
+    train_graphs.append(graph)
 
+# Generate the graph for the test set
+test_graphs = []
+for index, row in test_set.iterrows():
+    # Build the directed graph
+    graph = construct_graph(row['content_tokens'])
+    test_graphs.append(graph)
 
-print("Graph of the first article in the training set")
-plot_graph(graphs_train_set[2])
-
-# Feature Extraction via Common Subgraphs:
+# Plot a graph from the training set for visualization
+plot_graph(train_graphs[2])
+"""
+#Feature extraction via common subgraph
 
 training_labels = train_set['label'].tolist()
 classifier = train_classifier(graphs_train_set, training_labels)
+
+#             3. Classification with KNN:
+    
+# Extracting labels
+train_labels = train_set['label'].tolist()
+test_labels = test_set['label'].tolist()
+
+# Classification
+i = 0
+k = 3
+predicted_labels = []
+true_labels = []
+for test_instance in test_graphs:
+    predicted_label = knn(train_graphs, test_instance, k, train_labels)
+    true_label = test_labels[i]
+    i += 1
+    predicted_labels.append(predicted_label)
+    true_labels.append(true_label)
+    print(f'Predicted class: {predicted_label} ------- Actual Class: {true_label}')
+#            4. Evaluation:
+accuracy = accuracy_score(true_labels, predicted_labels)
+accuracy_percentage = accuracy * 100
+print("Accuracy: ", accuracy_percentage)
+
+# Compute evaluation metrics
+report = classification_report(test_labels, predicted_labels)
+
+# Print classification report
+print("Classification Report:")
+print(report)
+
+# Compute confusion matrix
+cm = confusion_matrix(test_labels, predicted_labels)
+
+# Plot confusion matrix
+plt.figure(figsize=(8, 6))
+sns.heatmap(cm, annot=True, cmap='Blues', fmt='d', xticklabels=np.unique(train_labels), yticklabels=np.unique(train_labels))
+plt.xlabel('Predicted Labels')
+plt.ylabel('True Labels')
+plt.title('Confusion Matrix')
+plt.show()
+"""
