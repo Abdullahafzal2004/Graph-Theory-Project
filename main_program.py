@@ -32,21 +32,17 @@ test_set = preprocessed_df.iloc[36:]   # Access the remaining rows
 # Generate the graph for the training set
 train_graphs = []
 for index, row in train_set.iterrows():
-    content_tokens = row.get('content_tokens')  # Check if 'content_tokens' exists in the row
-    if content_tokens:
-        graph = construct_graph(content_tokens)
-        train_graphs.append(graph)
+    graph = construct_graph(row['content_tokens'])  # Check if 'content_tokens' exists in the row
+    train_graphs.append(graph)
 
 # Generate the graph for the test set
 test_graphs = []
 for index, row in test_set.iterrows():
-    content_tokens = row.get('content_tokens')  # Check if 'content_tokens' exists in the row
-    if content_tokens:
-        graph = construct_graph(content_tokens)
-        test_graphs.append(graph)
+    graph = construct_graph(row['content_tokens'])  # Check if 'content_tokens' exists in the row
+    test_graphs.append(graph)
 
 # Plot a graph from the training set for visualization
-plot_graph(train_graphs[4])
+plot_graph(train_graphs[2])
 
 
 #             3. Classification with KNN:

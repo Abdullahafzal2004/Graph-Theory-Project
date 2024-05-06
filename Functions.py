@@ -23,7 +23,7 @@ def combine_and_save_data(filename):
     combined_df = pd.DataFrame()
 
     # Iterate over the rows of the dataframes and concatenate them row by row
-    for i in range(5):
+    for i in range(15):
         combined_df = pd.concat([combined_df, df1.iloc[[i]]])
         combined_df = pd.concat([combined_df, df2.iloc[[i]]])
         combined_df = pd.concat([combined_df, df3.iloc[[i]]])

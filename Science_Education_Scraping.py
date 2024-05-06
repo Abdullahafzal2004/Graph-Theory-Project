@@ -141,12 +141,12 @@ def scrape_articles(url_base, pages, min_articles):
 """Main function"""
 
 # URL to scrape
-sport_url = 'https://ssec.si.edu/stemvisions-blog'
+edu_url = 'https://ssec.si.edu/stemvisions-blog'
 pages = 4  # Number of pages to scrape
 min_articles = 15  # Minimum number of articles to scrape
 
 # Scrape articles
-articles_data = scrape_articles(sport_url, pages, min_articles)
+articles_data = scrape_articles(edu_url, pages, min_articles)
 # Create a directory to save the articles
 os.makedirs("articles", exist_ok=True)
 csv_file = 'articles/science_education_articles.csv'
